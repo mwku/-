@@ -8,7 +8,7 @@ from json import load, dump
 from PIL import Image, ImageEnhance, ImageFilter
 import pytesseract
 from random import randint
-member = ['A132112067','A131845692','O100787953']
+member = ['A132112067', 'A131845692', 'O100787953']
 # 設定 Tesseract OCR 執行檔的路徑
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -79,7 +79,15 @@ while True:
                 # print("CAPTCHA Text:", captcha_text)
                 captcha_input = driver.find_element(By.ID, 'txtValidateCode')
                 captcha_input.clear()
-                captcha_input.send_keys(captcha_text)
+                try:
+                    captcha_input.send_keys(captcha_text)
+                except:
+                    sleep(1)
+                    driver.get('https://game.mnd.gov.tw/gameindex.aspx')
+                    data['次數'] += 1
+                    with open('imformation.json', 'w', encoding='UTF-8') as f:
+                        dump(data, f, ensure_ascii=False, indent=4)
+                    is_end = True
                 try:
                     submit_button = driver.find_element(
                         By.TAG_NAME, 'input[type="submit"]')
@@ -103,12 +111,7 @@ while True:
                         # a.click()
                         # # sleep(2)
                     except:
-                        sleep(1)
-                        driver.get('https://game.mnd.gov.tw/gameindex.aspx')
-                        data['次數'] += 1
-                        with open('imformation.json', 'w', encoding='UTF-8') as f:
-                            dump(data, f, ensure_ascii=False, indent=4)
-                        is_end = True
+                        pass
             else:
                 a = driver.find_element(By.ID, 'reflash')
                 a.click()
