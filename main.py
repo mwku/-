@@ -8,27 +8,33 @@ from json import load, dump
 from PIL import Image, ImageEnhance, ImageFilter
 import pytesseract
 from random import randint
-member = ['A132112067', 'A131845692', 'O100787953']
+from data import *
+member = data  # 身分證字號
 # 設定 Tesseract OCR 執行檔的路徑
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
+# 開啟chrome
 driver = Chrome()
 driver.maximize_window()
 driver.get('https://game.mnd.gov.tw/gameindex.aspx')
+count = 3
+time = 0
+# 刷題
 while True:
-    for time in range(3):
+    try:
+
         a = driver.find_element(By.CLASS_NAME, 'img-fluid.mt-sm-3')
         a.click()
-        # sleep(3)
         for i in range(9):
+            # 開答案
             with open('imformation.json', 'r', encoding='UTF-8') as f:
                 data = load(f)
 
-            a = driver.find_element(By.CLASS_NAME, 'display-5.question2').text
+            a = driver.find_element(
+                By.CLASS_NAME, 'display-5.question2').text  # 抓題目
             answer = driver.find_elements(
-                By.CLASS_NAME, 'btn-answer.btn-lg.btn-block')
+                By.CLASS_NAME, 'btn-answer.btn-lg.btn-block')  # 抓選項
             if a in data:
-                for i in answer:
+                for i in answer:  # 選答案
                     if data[a] in i.text:
                         i.click()
                         a = driver.find_element(
@@ -52,16 +58,26 @@ while True:
         alert = driver.switch_to.alert
         alert.accept()
 
-        # 輸入 PID
+        # 輸入身分證字號
         a = driver.find_element(By.ID, 'PID')
-        a.send_keys(member[time % 2])
-        print(member[time % 2])
+        a.send_keys(member[time % count])
+        print(member[time % count])
 
         is_end = False
         while not is_end:
-            # sleep(3)
-            captcha_image = driver.find_element(By.ID, 'CAPTCHAImage')
-            captcha_image.screenshot('captcha.png')
+            try:
+                captcha_image = driver.find_element(By.ID, 'CAPTCHAImage')
+                captcha_image.screenshot('captcha.png')
+
+            except:
+                sleep(1)
+                driver.get('https://game.mnd.gov.tw/gameindex.aspx')
+                data['次數'] += 1
+                with open('imformation.json', 'w', encoding='UTF-8') as f:
+                    dump(data, f, ensure_ascii=False, indent=4)
+                is_end = True
+                time += 1
+                break
 
             # 圖片預處理
             image = Image.open('captcha.png')
@@ -76,28 +92,18 @@ while True:
             captcha_text = pytesseract.image_to_string(image)
             print(f'"{captcha_text}"', len(str(captcha_text)))
             if len(str(captcha_text)) == 7:
-                # print("CAPTCHA Text:", captcha_text)
-                captcha_input = driver.find_element(By.ID, 'txtValidateCode')
+                captcha_input = driver.find_element(
+                    By.ID, 'txtValidateCode')
                 captcha_input.clear()
-                try:
-                    captcha_input.send_keys(captcha_text)
-                except:
-                    sleep(1)
-                    driver.get('https://game.mnd.gov.tw/gameindex.aspx')
-                    data['次數'] += 1
-                    with open('imformation.json', 'w', encoding='UTF-8') as f:
-                        dump(data, f, ensure_ascii=False, indent=4)
-                    is_end = True
+                captcha_input.send_keys(captcha_text)
+
                 try:
                     submit_button = driver.find_element(
                         By.TAG_NAME, 'input[type="submit"]')
                 except:
                     pass
-                # 點擊提交按鈕
                 try:
-                    # print('finish')
                     submit_button.click()
-                    # print('finish')
 
                 except:
                     sleep(2)
@@ -107,27 +113,14 @@ while True:
                             sleep(10)
                         alert.accept()
                         sleep(0.5)
-                        # a = driver.find_element(By.ID, 'reflash')
-                        # a.click()
-                        # # sleep(2)
                     except:
                         pass
             else:
                 a = driver.find_element(By.ID, 'reflash')
                 a.click()
-        # sleep(randint(10, 20))
-    sleep(30)
-    # print('finish submit')
-    # try:
-    #     sleep(2)
-    #     a = driver.find_element(By.TAG_NAME, 'a[type="gameindex.aspx"]')
-    #     a.click()
-    #     is_end = True
-    #     print('a')
-    #     sleep(5)
-    # except:
-    #     is_end = True
-    #     pass
+    # sleep(30)
+    except:
+        driver.get('https://game.mnd.gov.tw/gameindex.aspx')
 #                                             _ooOoo
 #                                            o8888888o
 #                                            88" . "88
