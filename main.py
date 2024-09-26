@@ -16,7 +16,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 driver = Chrome()
 driver.maximize_window()
 driver.get('https://game.mnd.gov.tw/gameindex.aspx')
-count = 3
+count = len(member)
 time = 0
 # 刷題
 while True:
