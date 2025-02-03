@@ -1,8 +1,8 @@
 # 世界母語日~ 快樂學母語，線上猜燈謎~  外掛程式2025版本
 ## 執行準備
 ### 環境需求
-* Python
-* beautifulsoup4  
+- [ ] Python
+- [ ] beautifulsoup4  
 ### [Python安裝](https://www.python.org/downloads/)  
 ### beautifulsoup4模組安裝
 *  在終端機輸入`pip install beautifulsoup4`
