@@ -1,2 +1,3 @@
 # 世界母語日~ 快樂學母語，線上猜燈謎~  外掛程式使用說明:
-##環境需求
+## 環境需求
+[Python執行環境](https://www.python.org/downloads/)
