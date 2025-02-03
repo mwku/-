@@ -9,8 +9,7 @@ header = {
     'Referer': 'https://inative2025.azurewebsites.net/game.asp',
     'Origin': 'https://inative2025.azurewebsites.net',
     'Host': 'inative2025.azurewebsites.net',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'cookies': ''  #你的cookie資料
+    'Content-Type': 'application/x-www-form-urlencoded'
 }
 
 data = {
